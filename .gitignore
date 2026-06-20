@@ -1,0 +1,37 @@
+# ---- .NET ----
+bin/
+obj/
+*.user
+*.suo
+.vs/
+[Tt]est[Rr]esults/
+*.trx
+*.coverage
+coverage/
+
+# ---- Node / Angular ----
+node_modules/
+frontend/dist/
+.angular/
+npm-debug.log*
+yarn-error.log*
+
+# ---- Terraform ----
+**/.terraform/*
+*.tfstate
+*.tfstate.*
+crash.log
+*.tfvars
+!*.tfvars.example
+.terraform.lock.hcl
+
+# ---- Env / secrets ----
+.env
+.env.*
+*.local
+
+# ---- OS / editor ----
+.DS_Store
+Thumbs.db
+.idea/
+*.swp
