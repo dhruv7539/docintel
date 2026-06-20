@@ -1,0 +1,33 @@
+<div class="auth-card">
+  <h1>DocIntel</h1>
+  <p class="tagline">AI document intelligence for your workspace</p>
+
+  <h2>{{ mode() === 'register' ? 'Create your workspace' : 'Welcome back' }}</h2>
+
+  <form (ngSubmit)="submit()">
+    <label *ngIf="mode() === 'register'">
+      Workspace name
+      <input name="workspaceName" [(ngModel)]="workspaceName" required placeholder="Acme Inc." />
+    </label>
+
+    <label>
+      Email
+      <input name="email" type="email" [(ngModel)]="email" required placeholder="you@company.com" />
+    </label>
+
+    <label>
+      Password
+      <input name="password" type="password" [(ngModel)]="password" required minlength="8" placeholder="At least 8 characters" />
+    </label>
+
+    <p class="error" *ngIf="error()">{{ error() }}</p>
+
+    <button type="submit" [disabled]="loading()">
+      {{ loading() ? 'Please wait...' : (mode() === 'register' ? 'Create workspace' : 'Sign in') }}
+    </button>
+  </form>
+
+  <button class="link" type="button" (click)="toggle()">
+    {{ mode() === 'register' ? 'Already have an account? Sign in' : 'Need an account? Create a workspace' }}
+  </button>
+</div>

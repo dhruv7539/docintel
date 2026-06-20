@@ -1,0 +1,68 @@
+<header class="topbar">
+  <div>
+    <span class="brand">DocIntel</span>
+    <span class="workspace">{{ auth.session()?.workspaceName }}</span>
+  </div>
+  <div class="user">
+    <span>{{ auth.session()?.email }}</span>
+    <button (click)="logout()">Sign out</button>
+  </div>
+</header>
+
+<main class="grid">
+  <section class="panel">
+    <h2>Documents</h2>
+
+    <div class="upload">
+      <label class="file-btn">
+        Upload a text file
+        <input type="file" accept=".txt,.md,.csv,.json,text/*" (change)="onFileSelected($event)" hidden />
+      </label>
+
+      <div class="paste">
+        <input [(ngModel)]="pasteName" placeholder="file name" />
+        <textarea [(ngModel)]="pasteContent" rows="4" placeholder="...or paste text to index"></textarea>
+        <button (click)="uploadPasted()" [disabled]="uploading()">
+          {{ uploading() ? 'Indexing...' : 'Index text' }}
+        </button>
+      </div>
+
+      <p class="error" *ngIf="uploadError()">{{ uploadError() }}</p>
+    </div>
+
+    <ul class="doc-list">
+      <li *ngFor="let d of documents()">
+        <span class="name">{{ d.fileName }}</span>
+        <span class="meta">{{ d.status }} · {{ d.chunkCount }} chunks</span>
+      </li>
+      <li class="empty" *ngIf="documents().length === 0">No documents yet — upload one to get started.</li>
+    </ul>
+  </section>
+
+  <section class="panel chat">
+    <h2>Ask your documents</h2>
+
+    <form class="ask" (ngSubmit)="ask()">
+      <input [(ngModel)]="question" name="question" placeholder="e.g. How fast is the rollback?" />
+      <button type="submit" [disabled]="asking()">{{ asking() ? 'Thinking...' : 'Ask' }}</button>
+    </form>
+
+    <div class="conversation">
+      <article *ngFor="let turn of conversation()" class="turn">
+        <p class="q">{{ turn.question }}</p>
+        <p class="a">{{ turn.answer }}</p>
+        <div class="sources" *ngIf="turn.sources.length">
+          <span class="src-label">Sources</span>
+          <div class="src" *ngFor="let s of turn.sources">
+            <strong>{{ s.fileName }} #{{ s.ordinal }}</strong>
+            <span class="score">score {{ s.score }}</span>
+            <p>{{ s.excerpt }}</p>
+          </div>
+        </div>
+      </article>
+      <p class="empty" *ngIf="conversation().length === 0">
+        Answers are grounded in your uploaded documents via retrieval-augmented generation.
+      </p>
+    </div>
+  </section>
+</main>
