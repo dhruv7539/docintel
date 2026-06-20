@@ -1,0 +1,9 @@
+project                 = "docintel"
+environment             = "dev"
+location                = "eastus"
+postgres_admin_username = "docintel"
+# Supply secrets via environment variables instead of committing them:
+#   export TF_VAR_postgres_admin_password="..."
+#   export TF_VAR_ai_api_key="..."
+api_image   = "docintel-api:latest"
+ai_provider = "Stub"
