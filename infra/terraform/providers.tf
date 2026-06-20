@@ -23,4 +23,9 @@ terraform {
 
 provider "azurerm" {
   features {}
+
+  # The required providers (Microsoft.App, OperationalInsights, ContainerRegistry,
+  # DBforPostgreSQL) are registered out of band; skip the slow auto-registration
+  # sweep of every provider in the subscription.
+  resource_provider_registrations = "none"
 }

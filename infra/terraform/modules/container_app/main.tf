@@ -4,6 +4,11 @@ variable "location" { type = string }
 variable "image" { type = string }
 variable "registry_server" { type = string }
 variable "registry_id" { type = string }
+variable "acr_admin_username" { type = string }
+variable "acr_admin_password" {
+  type      = string
+  sensitive = true
+}
 variable "postgres_connection_string" {
   type      = string
   sensitive = true
@@ -12,6 +17,10 @@ variable "ai_provider" { type = string }
 variable "ai_api_key" {
   type      = string
   sensitive = true
+}
+variable "cors_origins" {
+  type    = list(string)
+  default = []
 }
 variable "tags" {
   type    = map(string)
@@ -42,13 +51,18 @@ resource "azurerm_container_app" "this" {
   revision_mode                = "Single"
   tags                         = var.tags
 
-  identity {
-    type = "SystemAssigned"
+  # Pull from ACR with admin credentials. A system-assigned identity would
+  # deadlock first-time creation: the image pull needs an AcrPull role that
+  # can't exist until the app (and its identity) is created.
+  registry {
+    server               = var.registry_server
+    username             = var.acr_admin_username
+    password_secret_name = "acr-password"
   }
 
-  registry {
-    server   = var.registry_server
-    identity = "SystemAssigned"
+  secret {
+    name  = "acr-password"
+    value = var.acr_admin_password
   }
 
   secret {
@@ -92,6 +106,14 @@ resource "azurerm_container_app" "this" {
         secret_name = "ai-api-key"
       }
 
+      dynamic "env" {
+        for_each = var.cors_origins
+        content {
+          name  = "Cors__Origins__${env.key}"
+          value = env.value
+        }
+      }
+
       liveness_probe {
         transport = "HTTP"
         port      = 8080
@@ -116,13 +138,6 @@ resource "azurerm_container_app" "this" {
       percentage      = 100
     }
   }
-}
-
-# Allow the container app's managed identity to pull from ACR.
-resource "azurerm_role_assignment" "acr_pull" {
-  scope                = var.registry_id
-  role_definition_name = "AcrPull"
-  principal_id         = azurerm_container_app.this.identity[0].principal_id
 }
 
 output "fqdn" {

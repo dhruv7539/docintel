@@ -1,5 +1,12 @@
 # DocIntel — AI Document Intelligence SaaS
 
+**▶ Live demo:** https://victorious-smoke-03453aa0f.7.azurestaticapps.net
+&nbsp;·&nbsp; API health: https://docintel-dev-api.whitemoss-6d3610e2.eastus2.azurecontainerapps.io/health
+
+> Running on Azure: Angular UI on **Static Web Apps**, the .NET API on **Container Apps**,
+> data in **PostgreSQL Flexible Server**, answers from **OpenAI**. Register a workspace,
+> upload a PDF/`.docx`/text file, and ask questions with cited sources.
+
 DocIntel is a multi-tenant SaaS where teams upload documents and ask
 natural-language questions answered with **retrieval-augmented generation
 (RAG)** over their own content. It is built on the Microsoft stack — an
